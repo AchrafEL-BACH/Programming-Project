@@ -70,15 +70,14 @@ class SpaceItem {
     
     Date(String value){
       if(value.equals("")) return;
-      print(value);
-      String values[] = value.split("");
+      String values[] = value.split("\\s+");
       day = Integer.parseInt(values[0]);
       month = values[1];
       year = Integer.parseInt(values[2]);
     }
     
     String toString(){
-      return "";
+      return day + " " + month + " " + year;
     }
   }
 }
