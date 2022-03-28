@@ -65,6 +65,10 @@ class DataBox extends PApplet {
     text("Flag", -20, 0);
   }
   
+  DataPoint getObject(){
+    return this.spaceObject;
+  }
+  
   void setObject(DataPoint object){
     this.spaceObject = new DataPoint(object);
   }

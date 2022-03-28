@@ -11,13 +11,13 @@ class SpaceItem {
   SpaceItem(String line){
     String[] object = line.split("\t");
     name = object[4];
-    launchDate = new Date(object[6]);
     status = object[11];
     state = object[14];
     mass = Integer.parseInt(object[18]);
     diameter = parseDouble(object[26].replaceAll(" ", ""));
     perigee = parseDouble(object[32].replaceAll(" ", ""));
     apogee = parseDouble(object[34].replaceAll(" ", ""));
+    launchDate = new Date(object[6]);
   }
   
   double parseDouble(String number){
@@ -71,9 +71,15 @@ class SpaceItem {
     Date(String value){
       if(value.equals("")) return;
       String values[] = value.split("\\s+");
-      day = Integer.parseInt(values[0]);
-      month = values[1];
-      year = Integer.parseInt(values[2]);
+      String pseudoYear = values[0];
+      if(pseudoYear.endsWith("?")) {
+        year = -1 * Integer.parseInt(pseudoYear.substring(0, pseudoYear.length() - 1));
+        println(); //<>//
+      } else {
+        year = Integer.parseInt(pseudoYear);
+        month = values[1];
+        day = Integer.parseInt(values[2]);
+      }
     }
     
     String toString(){

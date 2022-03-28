@@ -16,7 +16,7 @@ class DataPoint{
     semiMajor = (apogee+diameter/1000+perigee)/2;
     double focusDistance = apogee - semiMajor;
     semiMinor = Math.sqrt(semiMajor * semiMajor - focusDistance * focusDistance);
-    center = width/2 + (floor(random(1))*2 - 1) * (float)focusDistance;
+    center = width/2 + (round(random(1))*2 - 1) * (float)focusDistance;
     angle = random((float)Math.PI);
     speed = random(4) - 2;
     size = 1000/12742*diameter;
@@ -25,6 +25,7 @@ class DataPoint{
   
   DataPoint(DataPoint copy){
     this.object = copy.object;
+    this.center = copy.center;
     this.semiMajor = copy.semiMajor;
     this.semiMinor = copy.semiMinor;
     this.spikes = copy.spikes;
@@ -45,27 +46,33 @@ class DataPoint{
     return sqrDistance;
   }
   
-  void drawOrbit() {
+  void drawOrbit(boolean selected) {
     noFill();
-    strokeWeight(0.3);
-    stroke(color(200));
+    if (selected) {
+      strokeWeight(4);
+      stroke(255, 100, 255);
+    } else {
+      strokeWeight(0.3);
+      stroke(color(200));
+    }
     ellipse(center, height/2, (float)semiMajor*2, (float)semiMinor*2);
+    strokeWeight(1);
     noStroke();
   }
   
-  void drawObject(boolean dataBox) {
-    fill(color(0));
-    circle(center + xpos, height/2 + ypos, 5);
-    if (DRAW_SPIKES) rectangleSpread(spikes, center + xpos, height/2 + ypos, 5, 3);
+  void drawObject(PGraphics canvas) {
+    canvas.fill(color(0));
+    canvas.circle(center + xpos, height/2 + ypos, 5);
+    if (DRAW_SPIKES) rectangleSpread(spikes, center + xpos, height/2 + ypos, 5, 3, canvas);
   }
   
-  void rectangleSpread(int amount, float x, float y, int rectWidth, int rectHeight){
+  void rectangleSpread(int amount, float x, float y, int rectWidth, int rectHeight, PGraphics canvas){
     for(int i = 0; i < amount; i++){
-      pushMatrix();
-      translate(x, y);
-      rotate(2*PI/amount * i);
-      rect(0, 0, rectWidth, rectHeight);
-      popMatrix();
+      canvas.pushMatrix();
+      canvas.translate(x, y);
+      canvas.rotate(2*PI/amount * i);
+      canvas.rect(0, 0, rectWidth, rectHeight);
+      canvas.popMatrix();
     }
   }
   
