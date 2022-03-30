@@ -73,8 +73,7 @@ class SpaceItem {
       String values[] = value.split("\\s+");
       String pseudoYear = values[0];
       if(pseudoYear.endsWith("?")) {
-        year = -1 * Integer.parseInt(pseudoYear.substring(0, pseudoYear.length() - 1));
-        println(); //<>//
+        year = -1 * Integer.parseInt(pseudoYear.substring(0, pseudoYear.length() - 1)); //<>//
       } else {
         year = Integer.parseInt(pseudoYear);
         month = values[1];
@@ -83,6 +82,7 @@ class SpaceItem {
     }
     
     String toString(){
+      if(year<0) return "Around the year " + year*-1;
       return day + " " + month + " " + year;
     }
   }

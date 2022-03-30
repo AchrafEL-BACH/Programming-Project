@@ -5,7 +5,7 @@ boolean released;
 DataBox info;
 DataPoint closestObject;
 
-final int OBJECTS_SHOWN = 10000;
+final int OBJECTS_SHOWN = 1000;
 final int WINDOW_WIDTH = 1200;
 final int WINDOW_HEIGHT = 1000;
 
