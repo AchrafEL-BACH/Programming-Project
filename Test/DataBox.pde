@@ -3,7 +3,7 @@ class DataBox extends PApplet {
   DataPoint spaceObject;
   
   DataBox(DataPoint object){
-    this.windowWidth = 400;
+    this.windowWidth = 300;
     this.windowHeight = 600;
     this.spaceObject = object;
   }
@@ -46,7 +46,7 @@ class DataBox extends PApplet {
     text(infos.get_diameter()+"", 25, 490);
     text(infos.get_perigee()+"", 25, 540);
     text(infos.get_apogee()+"", 25, 590);
-    translate(200,100);
+    translate(150,100);
     fill(0);
     rotate((float)spaceObject.angle);
     spaceObject.angle += 0.01;

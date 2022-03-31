@@ -1,3 +1,7 @@
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.util.Locale;
+
 class SpaceItem {
   String name;
   Date launchDate;
@@ -69,7 +73,7 @@ class SpaceItem {
     int year;
     
     Date(String value){
-      if(value.equals("")) return;
+      if(value.equals("")) return; //<>//
       String values[] = value.split("\\s+");
       String pseudoYear = values[0];
       if(pseudoYear.endsWith("?")) {
@@ -78,6 +82,36 @@ class SpaceItem {
         year = Integer.parseInt(pseudoYear);
         month = values[1];
         day = Integer.parseInt(values[2]);
+      }
+    }
+    
+    Date(int day, String month, int year){
+      this.day = day;
+      this.month = month;
+      this.year = year;
+    }
+    
+    boolean isBefore(String date){
+      Date d = new Date(date);
+      if (year < 0){
+        return (-1 * year) <= d.year;
+      } else {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH);
+        LocalDate current = LocalDate.parse(toString(), formatter);
+        LocalDate compared = LocalDate.parse(d.toString(), formatter);
+        return current.isBefore(compared) || current.isEqual(compared);
+      }
+    }
+    
+    boolean isAfter(String date){
+      Date d = new Date(date);
+      if (year < 0){
+        return (-1 * year) >= d.year;
+      } else {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH);
+        LocalDate current = LocalDate.parse(toString(), formatter);
+        LocalDate compared = LocalDate.parse(d.toString(), formatter);
+        return current.isAfter(compared) || current.isEqual(compared);
       }
     }
     
