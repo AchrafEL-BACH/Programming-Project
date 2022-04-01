@@ -33,7 +33,7 @@ void setup(){
   ft.setDistanceFilter((double)200, (double)400);
   ft.setDateFilter("1973 Jan 01", "1971 Jan 01");
   objects = ft.getFilterResults();
-  objects = Arrays.stream(objects).sorted((o1, o2) -> o1.getObject().get_name().toLowerCase().compareTo(o2.getObject().get_name().toLowerCase())).toArray(DataPoint[]::new);
+  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.NAME, SortingTool.DATE)).toArray(DataPoint[]::new);
   
   // Display of the objects' orbit (base layer of the canvas)
   background(255);

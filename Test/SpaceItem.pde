@@ -1,6 +1,7 @@
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.lang.Comparable;
 
 class SpaceItem {
   String name;
@@ -67,17 +68,17 @@ class SpaceItem {
     return apogee;
   }
   
-  class Date{
+  class Date implements Comparable<Date> {
     int day;
     String month;
     int year;
     
     Date(String value){
-      if(value.equals("")) return; //<>//
+      if(value.equals("")) return;
       String values[] = value.split("\\s+");
       String pseudoYear = values[0];
       if(pseudoYear.endsWith("?")) {
-        year = -1 * Integer.parseInt(pseudoYear.substring(0, pseudoYear.length() - 1)); //<>//
+        year = -1 * Integer.parseInt(pseudoYear.substring(0, pseudoYear.length() - 1));
       } else {
         year = Integer.parseInt(pseudoYear);
         month = values[1];
@@ -113,6 +114,13 @@ class SpaceItem {
         LocalDate compared = LocalDate.parse(d.toString(), formatter);
         return current.isAfter(compared) || current.isEqual(compared);
       }
+    }
+    
+    @Override public int compareTo(Date o) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH);
+      LocalDate current = LocalDate.parse(toString(), formatter);
+      LocalDate compared = LocalDate.parse(o.toString(), formatter);
+      return current.compareTo(compared);
     }
     
     String toString(){
