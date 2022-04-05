@@ -28,12 +28,12 @@ void setup(){
   mask.endDraw();
   
   //Filter test
-  FilteringTool ft= new FilteringTool("gcat10k.tsv");
+  FilteringTool ft= new FilteringTool("gcat1k.tsv");
   ft.setStateFilter("SU");
   ft.setDistanceFilter((double)200, (double)400);
   ft.setDateFilter("1973 Jan 01", "1971 Jan 01");
   objects = ft.getFilterResults();
-  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.NAME, SortingTool.DATE)).toArray(DataPoint[]::new);
+  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.DATE, SortingTool.NAME)).toArray(DataPoint[]::new);
   
   // Display of the objects' orbit (base layer of the canvas)
   background(255);

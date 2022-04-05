@@ -24,6 +24,6 @@ public interface ObjectFilter extends Predicate<DataPoint> {
   }
   
   static ObjectFilter merge(ObjectFilter... objectFilters) {
-    return object -> Arrays.stream(objectFilters).allMatch(filter -> filter.test(object));
+    return object -> Arrays.stream(objectFilters).filter(o -> o != null).allMatch(filter -> filter.test(object)); //<>//
   }
 }
