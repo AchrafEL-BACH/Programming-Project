@@ -5,6 +5,8 @@ PImage orbits, magnified;
 boolean released;
 DataBox info;
 DisplayList list;
+UserPanel user;
+FilteringTool ft;
 
 final int OBJECTS_SHOWN = 1000;
 final int WINDOW_WIDTH = 1200;
@@ -28,46 +30,49 @@ void setup(){
   mask.endDraw();
   
   //Filter test
-  FilteringTool ft= new FilteringTool("gcat1k.tsv");
-  ft.setStateFilter("SU");
+  ft= new FilteringTool("gcat1k.tsv");
+  ft.setStateFilter(new String[]{"SU", "US"});
   ft.setDistanceFilter((double)200, (double)400);
-  ft.setDateFilter("1973 Jan 01", "1971 Jan 01");
+  ft.setDateFilter("1971 Jan 01", "1973 Jan 01");
   objects = ft.getFilterResults();
-  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.DATE, SortingTool.NAME)).toArray(DataPoint[]::new);
+  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.DATE, SortingTool.NAME)).toArray(DataPoint[]::new); //<>//
   
   // Display of the objects' orbit (base layer of the canvas)
-  background(255);
   /*for(int i = 0; i < OBJECTS_SHOWN; i++) {
     DataPoint object = objects.get(i);*/
+  PGraphics orbitsCanvas = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
+  orbitsCanvas.beginDraw();
+  orbitsCanvas.background(255);
   for(DataPoint object : objects){
-    object.drawOrbit(false);
+    object.drawOrbit(orbitsCanvas);
   }
-  orbits = get();
+  orbitsCanvas.endDraw();
+  orbits = orbitsCanvas.get();
   
   // Display of the objects (second layer of the canvas)
-  canvas = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
+  canvas = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT); //<>//
   
   // Filter window commands
-  PApplet filter = new PApplet();
-  filter.setSize(300, 400);
-  PApplet.runSketch(new String[]{"--location=1200,600", "FilterBox"}, filter);
+  //user = new UserPanel(ft.getStateList(), ft.getMinDistance(), ft.getMaxDistance());
+  user = new UserPanel(ft.getStateList(), 0, 1500);
+  PApplet.runSketch(new String[]{"--location=1200,600", "UserPanel"}, user);
   
   // Object list window commands
-  listImage = drawList(objects);
+  listImage = drawList(objects); //<>//
   list = new DisplayList(objects, drawSelected(0, listImage.get()));
   PApplet.runSketch(new String[]{"--location=1500,0", "DisplayList"}, list);
   
   // InfoBox window commands
   info = new DataBox(new DataPoint(objects[0]));
-  PApplet.runSketch(new String[]{"--location=1200,0", "InfoBox"}, info); //<>//
+  PApplet.runSketch(new String[]{"--location=1200,0", "InfoBox"}, info);
 }
- //<>//
+
 void draw(){
   image(orbits, 0, 0);
   fill(color(0,0,255));
   circle(width/2, height/2, 20);
   DataPoint selected = info.getObject();
-  selected.drawOrbit(true);
+  selected.drawSelectedOrbit();
   double minDist = Double.POSITIVE_INFINITY;
   canvas.beginDraw();
   canvas.clear();
@@ -78,12 +83,12 @@ void draw(){
       double dist = object.move();
       if(dist<minDist){
         minDist = dist;
-        closestObject = object; //<>//
+        closestObject = object;
       }
     }
-    object.drawObject(canvas); //<>//
+    object.drawObject(canvas);
   }
-  canvas.endDraw(); //<>//
+  canvas.endDraw();
   if (released) {
     info.setObject(closestObject);
     released = false;
@@ -102,10 +107,45 @@ void draw(){
   rect(mouseX-10, mouseY-1, 20, 2);
   rect(mouseX-1, mouseY-10, 2, 20);
   noStroke();
+  
+  if(user.isSubmitting()){
+    String[] states = user.getStates();
+    int[] distances = user.getDistances(); //<>//
+    String[] dates = user.getDates();
+    
+    ft.setStateFilter(states);
+    ft.setDistanceFilter((double)distances[0], (double)distances[1]);
+    ft.setDateFilter(dates[0], dates[1]);
+    objects = ft.getFilterResults();
+    
+    PGraphics selectedImage;
+    if(objects.length > 0){
+      listImage = drawList(objects);
+      selectedImage = drawSelected(0, listImage);
+      info.setObject(objects[0]);
+    } else {
+      selectedImage = createGraphics(300, 1500);
+      selectedImage.beginDraw();
+      selectedImage.background(0);
+      selectedImage.endDraw();
+    }
+    list.setList(objects, selectedImage);
+    
+    PGraphics orbitsCanvas = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
+    orbitsCanvas.beginDraw();
+    orbitsCanvas.background(255);
+    for(DataPoint object : objects){
+      object.drawOrbit(orbitsCanvas);
+    }
+    orbitsCanvas.endDraw();
+    orbits = orbitsCanvas.get();
+    
+    user.finishSubmitting();
+  }
 }
 
 void mouseReleased(){
-  released = true; //Goes through a boolean intermediate because one more cycle is needed before the method launch //<>//
+  released = true; //Goes through a boolean intermediate because one more cycle is needed before the method launch
 }
 
 PGraphics drawList(DataPoint[] objects){

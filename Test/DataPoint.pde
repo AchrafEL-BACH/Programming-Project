@@ -10,8 +10,8 @@ class DataPoint{
   
   DataPoint(String line){
     object = new SpaceItem(line);
-    double apogee = object.get_apogee();
-    double perigee = object.get_perigee();
+    double apogee = object.get_apogee()       /2; //divided by two to be able to render furthest objects
+    double perigee = object.get_perigee()     /2;
     double diameter = object.get_diameter();
     semiMajor = (apogee+diameter/1000+perigee)/2;
     double focusDistance = apogee - semiMajor;
@@ -19,7 +19,7 @@ class DataPoint{
     center = width/2 + (round(random(1))*2 - 1) * (float)focusDistance;
     angle = random((float)Math.PI);
     speed = random(4) - 2;
-    size = 1000/12742*diameter;
+    size = 1000/12742*diameter; //unused real scale because the items would be to small to render
     spikes = floor(random(7)+3);
   }
   
@@ -46,15 +46,19 @@ class DataPoint{
     return sqrDistance;
   }
   
-  void drawOrbit(boolean selected) {
+  void drawOrbit(PGraphics canvas) {
+    canvas.noFill();
+    canvas.strokeWeight(0.3);
+    canvas.stroke(200);
+    canvas.ellipse(center, height/2, (float)semiMajor*2, (float)semiMinor*2);
+    canvas.strokeWeight(1);
+    canvas.noStroke();
+  }
+  
+  void drawSelectedOrbit(){
     noFill();
-    if (selected) {
-      strokeWeight(4);
-      stroke(255, 100, 255);
-    } else {
-      strokeWeight(0.3);
-      stroke(color(200));
-    }
+    strokeWeight(4);
+    stroke(255, 100, 255);
     ellipse(center, height/2, (float)semiMajor*2, (float)semiMinor*2);
     strokeWeight(1);
     noStroke();
@@ -62,8 +66,8 @@ class DataPoint{
   
   void drawObject(PGraphics canvas) {
     canvas.fill(color(0));
-    canvas.circle(center + xpos, height/2 + ypos, 5);
-    if (DRAW_SPIKES) rectangleSpread(spikes, center + xpos, height/2 + ypos, 5, 3, canvas);
+    canvas.circle(center + xpos, height/2 + ypos, 3);
+    if (DRAW_SPIKES) rectangleSpread(spikes, center + xpos, height/2 + ypos, 3, 1, canvas);
   }
   
   void rectangleSpread(int amount, float x, float y, int rectWidth, int rectHeight, PGraphics canvas){

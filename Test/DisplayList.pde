@@ -1,8 +1,15 @@
 class DisplayList extends PApplet {
+  boolean displayMode;
+  
+  // Attributes needed for the displayScreen
   PGraphics listImage;
   int listHeight;
   DataPoint[] objects;
   Scrollbar sb;
+  
+  // Attributes needed for the sortingScreen
+  ArrayList<String> attributes;
+  ArrayList<String> selectedAttributes;
 
   void settings() {
     size(300, 1000);
@@ -10,6 +17,12 @@ class DisplayList extends PApplet {
 
   DisplayList(DataPoint[] objects, PGraphics image) {
     setList(objects, image);
+    this.displayMode = true;
+    
+    this.attributes = new ArrayList(){
+      {add("Name"); add("State"); add("Date"); add("Perigee"); add("Apogee");}
+    };
+    this.selectedAttributes = new ArrayList();
   }
 
   void setList(DataPoint[] newObjects, PGraphics image) {
@@ -25,23 +38,75 @@ class DisplayList extends PApplet {
   }
 
   void draw() {
-    int scrollValue = sb.scrollValue();
-    image(listImage.get(0, scrollValue, width, height), 0, 0, width, height);
-    sb.move();
-    sb.draw();
+    background(255);
+    if (displayMode){
+      int scrollValue = sb.scrollValue();
+      image(listImage.get(0, scrollValue, width, height), 0, 0, width, height);
+      sb.move();
+      sb.draw();
+      fill(255,0,0);
+      drawSortButton(250, 0);
+    } else {
+      textSize(70);
+      text("Sort by :", 5, 70);
+      int attributeCount = this.attributes.size();
+      textSize(50);
+      stroke(0);
+      for(int i = 0; i < attributeCount; i++){
+        String attribute = attributes.get(i);
+        boolean selected = selectedAttributes.contains(attribute);
+        if(selected){
+          fill(0);
+          int order = selectedAttributes.indexOf(attribute) + 1;
+          text(order, 220, 160);
+          fill(110);
+        }else{
+          fill(255);
+        }
+        rect(10, 100 + i * 100, 200, 100);
+        fill(0);
+        text(attribute, 30, 170 + i * 100);
+      }
+    }
+  }
+  
+  void drawSortButton(int x, int y){
+    noFill();
+    stroke(0);
+    rect(x, y, 30, 30);
+    fill(0);
+    triangle(x + 2, y + 2, x + 28, y + 2, x + 14, y + 28);
+    rect(x + 10, y + 28, 9, -10);
+    noStroke();
+    textSize(14);
+    text("Sort", x + 3, y + 45);
   }
   
   void mousePressed(){
-    sb.pressed();
+    if (displayMode){
+      sb.pressed();
+      if(mouseX>=250 && mouseX <= 280 && mouseY >= 0 && mouseY <= 30) displayMode = false;
+    } else {
+      int panelSize = attributes.size() * 100;
+      if(mouseX>=10 && mouseX <= 210 && mouseY >= 100 && mouseY <= 100 + panelSize){
+        String attribute = attributes.get(floor((mouseY - 100)/panelSize));
+        if(selectedAttributes.contains(attribute)) selectedAttributes.remove(attribute);
+        else selectedAttributes.add(attribute);
+      }
+    }
   }
   
   void mouseReleased(){
-    sb.released();
+    if (displayMode){
+      sb.released();
+    }
   }
   
   void mouseWheel(MouseEvent event) {
     float e = event.getCount();
-    sb.scrolled(e, -1);
+    if(displayMode){
+      sb.scrolled(e, -1);
+    }
   }
 
 

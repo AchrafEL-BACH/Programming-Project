@@ -25,9 +25,9 @@ public interface SortingTool extends Comparator<DataPoint>{
   static Comparator<DataPoint> sortBy(int... keys){
     Comparator<DataPoint> comparator = Comparator.comparing(DataPoint::getObject, comparators.get(keys[0]));
     for(int i = 1; i < keys.length; i++){
-      comparator = comparator.thenComparing(DataPoint::getObject, comparators.get(keys[i])); //<>//
+      comparator = comparator.thenComparing(DataPoint::getObject, comparators.get(keys[i]));
     }
-    return comparator; //<>//
+    return comparator;
   }
   
   static Comparator<DataPoint> test(){

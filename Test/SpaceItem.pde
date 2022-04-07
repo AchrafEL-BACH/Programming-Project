@@ -94,7 +94,7 @@ class SpaceItem {
     
     boolean isBefore(String date){
       Date d = new Date(date);
-      if (year < 0){
+      if (year < 0) {
         return (-1 * year) <= d.year;
       } else {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH);

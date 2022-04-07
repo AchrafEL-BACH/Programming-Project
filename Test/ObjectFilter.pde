@@ -3,8 +3,8 @@ import java.util.Arrays;
 
 public interface ObjectFilter extends Predicate<DataPoint> {
   
-  static ObjectFilter stateFilter(String state){
-    return object -> (object.getObject().get_state().equals(state));
+  static ObjectFilter stateFilter(String... states){
+    return object -> Arrays.stream(states).anyMatch(state -> object.getObject().get_state().equals(state));
   }
   
   static ObjectFilter perigeeFilter(Double perigee){
@@ -24,6 +24,6 @@ public interface ObjectFilter extends Predicate<DataPoint> {
   }
   
   static ObjectFilter merge(ObjectFilter... objectFilters) {
-    return object -> Arrays.stream(objectFilters).filter(o -> o != null).allMatch(filter -> filter.test(object)); //<>//
+    return object -> Arrays.stream(objectFilters).filter(o -> o != null).allMatch(filter -> filter.test(object));
   }
 }
