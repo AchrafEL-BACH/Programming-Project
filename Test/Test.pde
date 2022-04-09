@@ -35,7 +35,7 @@ void setup(){
   ft.setDistanceFilter((double)200, (double)400);
   ft.setDateFilter("1971 Jan 01", "1973 Jan 01");
   objects = ft.getFilterResults();
-  objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.DATE, SortingTool.NAME)).toArray(DataPoint[]::new); //<>//
+  //objects = Arrays.stream(objects).sorted(SortingTool.sortBy(SortingTool.DATE, SortingTool.NAME)).toArray(DataPoint[]::new); //<>//
   
   // Display of the objects' orbit (base layer of the canvas)
   /*for(int i = 0; i < OBJECTS_SHOWN; i++) {
@@ -141,6 +141,20 @@ void draw(){
     orbits = orbitsCanvas.get();
     
     user.finishSubmitting();
+  }
+  
+  if(list.isSubmitting()){
+    int[] attributes = list.finishSubmitting();
+    if(list.getDisplayMode()){
+      int index = attributes[0];
+      info.setObject(objects[index]);
+      list.setSelected(index, drawSelected(index, listImage));
+    } else {
+      objects = Arrays.stream(objects).sorted(SortingTool.sortBy(attributes)).toArray(DataPoint[]::new);
+      listImage = drawList(objects);
+      list.setList(objects, drawSelected(0, listImage));
+      list.setDisplayMode();
+    }
   }
 }
 
